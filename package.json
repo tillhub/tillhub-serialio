@@ -1,0 +1,14 @@
+{
+  "name": "serialio",
+  "version": "1.0.0",
+  "description": "Messaging API for communication over serial interfaces",
+  "main": "lib/SerialIO.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serialport": "^7.0.2"
+  }
+}
