@@ -1,3 +1,3 @@
-const SerialIO = require('./lib/SerialIO');
+const SerialIO = require('./lib/SerialIO')
 
-module.exports = SerialIO;
+module.exports = SerialIO

@@ -1,0 +1,40 @@
+{
+  "extends":[
+    "plugin:require-path-exists/recommended",
+    "standard"
+  ],
+  "plugins": [
+    "standard",
+    "promise",
+    "require-path-exists"
+  ],
+  "root": true,
+  "rules": {
+    "object-curly-spacing": [
+      2,
+      "always"
+    ],
+    "padded-blocks": [
+      "error",
+      "never"
+    ],
+    "object-curly-newline": [
+      "error",
+      {
+        "consistent": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "cluster/**/*.js"
+      ],
+      "rules": {
+        "require-path-exists/exists": [
+          0
+        ]
+      }
+    }
+  ]
+}
