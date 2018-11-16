@@ -1,5 +1,5 @@
 {
-  "name": "serialio",
+  "name": "tillhub-serialio",
   "version": "1.0.0",
   "description": "Messaging API for communication over serial interfaces",
   "main": "index.js",
@@ -14,14 +14,12 @@
     "serialport": "^7.0.2"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-standard": "^11.0.0",
+    "eslint": "^5.9.0",
+    "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-json": "^1.2.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-require-path-exists": "1.1.7",
-    "eslint-plugin-sort-requires": "^2.1.0",
-    "eslint-plugin-standard": "^3.1.0"
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-require-path-exists": "1.1.9",
+    "eslint-plugin-standard": "^4.0.0"
   }
 }
