@@ -1,4 +1,4 @@
-# SerialIO
+# SerialIO [![CircleCI](https://circleci.com/gh/tillhub/tillhub-serialio.svg?style=svg)](https://circleci.com/gh/tillhub/tillhub-serialio)
 
 SerialIO is a small library that allows sending and receiving messages over a serial port.
 
