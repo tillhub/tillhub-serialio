@@ -11,6 +11,7 @@
     "email": "robert.ende@tillhub.de"
   },
   "dependencies": {
+    "debug": "^4.1.0",
     "serialport": "^7.0.2"
   },
   "devDependencies": {
