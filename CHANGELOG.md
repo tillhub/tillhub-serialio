@@ -1,0 +1,26 @@
+# 1.0.0 (2018-11-16)
+
+
+### Bug Fixes
+
+* **build:** fixes file inclusion for npm ([50d314c](https://github.com/tillhub/tillhub-serialio/commit/50d314c))
+* **build:** fixes path to ci config ([ac1030f](https://github.com/tillhub/tillhub-serialio/commit/ac1030f))
+* fixed 2 eslint errors ([2a3cc21](https://github.com/tillhub/tillhub-serialio/commit/2a3cc21))
+* fixed data type internal variable declaration ([f7c149e](https://github.com/tillhub/tillhub-serialio/commit/f7c149e))
+* fixed error when trying to send simple string ([7ebe13a](https://github.com/tillhub/tillhub-serialio/commit/7ebe13a))
+* improved error handling and propagation ([a79bb22](https://github.com/tillhub/tillhub-serialio/commit/a79bb22))
+* improved message sending behaviour + improved logging ([e8e2a13](https://github.com/tillhub/tillhub-serialio/commit/e8e2a13))
+* improved messageHandler handling ([80117d3](https://github.com/tillhub/tillhub-serialio/commit/80117d3))
+* **Message:** fixed var raw message values binding to wrong internal variable ([26599cf](https://github.com/tillhub/tillhub-serialio/commit/26599cf))
+* **Message:** modified Message types ([cf350b7](https://github.com/tillhub/tillhub-serialio/commit/cf350b7))
+
+
+### Features
+
+* added abstract base class for message data ([252622a](https://github.com/tillhub/tillhub-serialio/commit/252622a))
+* added attempting to reopen serial port after unexpected close event ([0b5d236](https://github.com/tillhub/tillhub-serialio/commit/0b5d236))
+* added tests ([a976a9b](https://github.com/tillhub/tillhub-serialio/commit/a976a9b))
+* added/standardized data types ([3913c81](https://github.com/tillhub/tillhub-serialio/commit/3913c81))
+* disabled auto opening; added open(), close() and isOpen() functions ([60522a3](https://github.com/tillhub/tillhub-serialio/commit/60522a3))
+* enables auto build ([f4a7204](https://github.com/tillhub/tillhub-serialio/commit/f4a7204))
+* simplified SerialIO ([377aec4](https://github.com/tillhub/tillhub-serialio/commit/377aec4))
