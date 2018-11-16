@@ -40,3 +40,7 @@ serialIO.onMessage((ping) => {
   return 'PONG'
 })
 ```
+
+## LICENSE
+
+MIT

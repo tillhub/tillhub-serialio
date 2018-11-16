@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Messaging API for communication over serial interfaces",
   "main": "index.js",
+  "license": "MIT",
   "scripts": {
     "lint": "eslint -c .eslintrc .",
     "lint-fix": "eslint -c .eslintrc --fix .",
