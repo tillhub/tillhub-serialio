@@ -1,13 +1,18 @@
 {
-  "name": "tillhub-serialio",
-  "version": "1.0.0",
+  "name": "@tillhub/serialio",
+  "version": "0.1.0",
   "description": "Messaging API for communication over serial interfaces",
   "main": "index.js",
   "scripts": {
     "lint": "eslint -c .eslintrc .",
     "lint-fix": "eslint -c .eslintrc --fix .",
-    "tdd": "NODE_ENV=test DEBUG=serialio:* node test/tdd-runner.js",
-    "test": "node -v && NODE_ENV=test npm run lint && npm run tdd"
+    "tdd": "NODE_ENV=test DEBUG=serialio:* nodemon --exec nodemon test/tdd-runner.js",
+    "test": "npm run clean && node -v && NODE_ENV=test npm run lint && npm run test:unit",
+    "test:unit": "NODE_ENV=test nyc tape 'test/**/*.spec.js' | tap-spec && nyc report",
+    "clean": "rimraf coverage coverage.lcov .nyc_output",
+    "semantic-release": "semantic-release",
+    "precommit": "git add .",
+    "commit": "npm run precommit && git-cz"
   },
   "author": {
     "name": "Robert Ende",
@@ -18,8 +23,15 @@
     "serialport": "^7.0.2"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^3.0.0",
+    "@semantic-release/git": "^7.0.4",
+    "@semantic-release/github": "^5.0.6",
+    "@semantic-release/npm": "^5.0.4",
     "blue-tape": "^1.0.0",
     "chalk": "latest",
+    "commitizen": "^2.10.1",
+    "conventional-changelog-cli": "^2.0.5",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.9.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.12.0",
@@ -28,8 +40,73 @@
     "eslint-plugin-require-path-exists": "1.1.9",
     "eslint-plugin-standard": "^4.0.0",
     "glob": "latest",
+    "nodemon": "^1.18.6",
+    "nyc": "^13.1.0",
     "pump": "latest",
+    "rimraf": "^2.6.0",
+    "semantic-release": "^15.9.17",
     "tap-spec": "^5.0.0",
-    "tape": "^4.9.1"
+    "tape": "^4.9.1",
+    "validate-commit-msg": "^2.14.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    },
+    "validate-commit-msg": {
+      "types": "conventional-commit-types",
+      "helpMessage": "Use \"npm run commit\" instead, we use conventional-changelog format :) (https://github.com/commitizen/cz-cli)"
+    }
+  },
+  "release": {
+    "verifyConditions": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "prepare": [
+      "@semantic-release/npm",
+      "@semantic-release/changelog",
+      {
+        "path": "@semantic-release/git",
+        "assets": [
+          "dist",
+          "package.json",
+          "package-lock.json",
+          "src",
+          "CHANGELOG.md"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "publish": [
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": false,
+    "lines": 15,
+    "statements": 15,
+    "functions": 15,
+    "branches": 15,
+    "include": [
+      "lib/**/*.js",
+      "index.js"
+    ],
+    "exclude": [
+      "test/**/*.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text-summary",
+      "json"
+    ],
+    "require": [],
+    "extension": [],
+    "cache": true,
+    "all": true,
+    "report-dir": "./coverage"
   }
 }
