@@ -4,7 +4,10 @@
   "description": "Messaging API for communication over serial interfaces",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint -c .eslintrc .",
+    "lint-fix": "eslint -c .eslintrc --fix .",
+    "tdd": "NODE_ENV=test DEBUG=serialio:* node test/tdd-runner.js",
+    "test": "node -v && NODE_ENV=test npm run lint && npm run tdd"
   },
   "author": {
     "name": "Robert Ende",
@@ -15,12 +18,18 @@
     "serialport": "^7.0.2"
   },
   "devDependencies": {
+    "blue-tape": "^1.0.0",
+    "chalk": "latest",
     "eslint": "^5.9.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-require-path-exists": "1.1.9",
-    "eslint-plugin-standard": "^4.0.0"
+    "eslint-plugin-standard": "^4.0.0",
+    "glob": "latest",
+    "pump": "latest",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.9.1"
   }
 }
