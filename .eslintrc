@@ -6,10 +6,12 @@
   "plugins": [
     "standard",
     "promise",
+    "import",
     "require-path-exists"
   ],
   "root": true,
   "rules": {
+    "import/order": [2],
     "object-curly-spacing": [
       2,
       "always"
