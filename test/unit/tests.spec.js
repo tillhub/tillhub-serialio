@@ -100,21 +100,21 @@ test('request/reply functionality should work', async (t) => {
 
   // should succeed
   try {
-    t.equal(await sender.send(message1), reply1, 'message1 (string) test passed')
+    t.equal(await sender.sendRequest(message1), reply1, 'message1 (string) test passed')
   } catch (e) {
     t.fail(`msg1 test failed: ${e.message || e}`)
   }
 
   // should succeed
   try {
-    t.equal(JSON.stringify(await sender.send(message2)), JSON.stringify(reply2), 'message2 (json) test passed')
+    t.equal(JSON.stringify(await sender.sendRequest(message2)), JSON.stringify(reply2), 'message2 (json) test passed')
   } catch (e) {
     t.fail(`msg2 test failed: ${e.message || e}`)
   }
 
   // should fail
   try {
-    await sender.send(message3)
+    await sender.sendRequest(message3)
     t.fail('send(message3) fulfilled')
   } catch (e) {
     t.equal(e.message, reply3, 'message3 (Error) test passed')
