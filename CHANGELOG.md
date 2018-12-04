@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/tillhub/tillhub-serialio/compare/v1.0.0...v2.0.0) (2018-12-04)
+
+
+### Features
+
+* changed 4-byte start sequence to make message detection more robust ([9761387](https://github.com/tillhub/tillhub-serialio/commit/9761387))
+
+
+### BREAKING CHANGES
+
+* Due to this low-level change, prior versions will be unable to detect new messages sent with this version, and vice-versa.
+
 # 1.0.0 (2018-11-16)
 
 
