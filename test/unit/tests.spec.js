@@ -12,6 +12,16 @@ MockBinding.createPort('/dev/ttyFAKE2', { echo: false, record: true })
 test('open() and close() should succeed if the serial port exists & could be opened', async (t) => {
   const serialIO = new SerialIO('/dev/ttyFAKE1')
 
+  t.plan(4)
+
+  serialIO.onOpen(() => {
+    t.pass('open event fired')
+  })
+
+  serialIO.onClose(() => {
+    t.pass('close event fired')
+  })
+
   try {
     await serialIO.open()
     t.pass('opened successfully')
@@ -31,6 +41,15 @@ test('open() and close() should succeed if the serial port exists & could be ope
 
 test('open() and close() should fail if the serial port does not exist', async (t) => {
   const serialIO = new SerialIO('/dev/ttyFAILING')
+
+  t.plan(2)
+  serialIO.onOpen(() => {
+    t.fail('open event fired')
+  })
+
+  serialIO.onClose(() => {
+    t.fail('close event fired')
+  })
 
   try {
     await serialIO.open()
