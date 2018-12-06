@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/tillhub/tillhub-serialio/compare/v2.0.0...v2.1.0) (2018-12-06)
+
+
+### Features
+
+* added ability to set various event handlers ([6c44a38](https://github.com/tillhub/tillhub-serialio/commit/6c44a38))
+
 # [2.0.0](https://github.com/tillhub/tillhub-serialio/compare/v1.0.0...v2.0.0) (2018-12-04)
 
 
