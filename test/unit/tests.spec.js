@@ -69,39 +69,37 @@ test('open() and close() should fail if the serial port does not exist', async (
 
 test('string messages should be received and replied to successfully', async (t) => {
   const sender = new SerialIO('/dev/ttyFAKE1')
-  const replyer = new SerialIO('/dev/ttyFAKE2')
+  const replier = new SerialIO('/dev/ttyFAKE2')
 
   const message = 'this is a test message'
   const reply = 'this is a test reply'
 
   await sender.open()
+  await replier.open()
 
-  await replyer.open()
-
-  replyer.onMessage((msg) => {
+  replier.onMessage((msg) => {
     t.equal(msg, message, 'string message received successfully')
     return reply
   })
 
   let senderLastWrite
-  let replyerLastWrite
+  let replierLastWrite
 
+  // transmits data between sender & replier
   let interval = setInterval(() => {
-    // console.log('replyer last write:', replyer._port.binding.lastWrite)
-    if (replyer._port.binding.lastWrite !== replyerLastWrite) {
-      replyerLastWrite = replyer._port.binding.lastWrite
+    if (replier._port.binding.lastWrite !== replierLastWrite) {
+      replierLastWrite = replier._port.binding.lastWrite
 
-      if (replyerLastWrite !== null) {
-        sender._port.binding.emitData(replyerLastWrite)
+      if (replierLastWrite !== null) {
+        sender._port.binding.emitData(replierLastWrite)
       }
     }
 
-    // console.log('sender last write:', sender._port.binding.lastWrite)
     if (sender._port.binding.lastWrite !== senderLastWrite) {
       senderLastWrite = sender._port.binding.lastWrite
 
       if (senderLastWrite !== null) {
-        replyer._port.binding.emitData(senderLastWrite)
+        replier._port.binding.emitData(senderLastWrite)
       }
     }
   }, 100)
@@ -116,45 +114,43 @@ test('string messages should be received and replied to successfully', async (t)
   clearInterval(interval)
 
   await sender.close()
-  await replyer.close()
+  await replier.close()
   t.end()
 })
 
 test('json messages should be received and replied to successfully', async (t) => {
   const sender = new SerialIO('/dev/ttyFAKE1')
-  const replyer = new SerialIO('/dev/ttyFAKE2')
+  const replier = new SerialIO('/dev/ttyFAKE2')
 
   const message = { msg: 'message' }
   const reply = { msg: 'reply' }
 
   await sender.open()
+  await replier.open()
 
-  await replyer.open()
-
-  replyer.onMessage((msg) => {
+  replier.onMessage((msg) => {
     t.equal(JSON.stringify(msg), JSON.stringify(message), 'json message received successfully')
     return reply
   })
 
   let senderLastWrite
-  let replyerLastWrite
+  let replierLastWrite
 
+  // tansmits data between sender & replier
   let interval = setInterval(() => {
-    // console.log('replyer last write:', replyer._port.binding.lastWrite)
-    if (replyer._port.binding.lastWrite !== replyerLastWrite) {
-      replyerLastWrite = replyer._port.binding.lastWrite
+    if (replier._port.binding.lastWrite !== replierLastWrite) {
+      replierLastWrite = replier._port.binding.lastWrite
 
-      if (replyerLastWrite !== null) {
-        sender._port.binding.emitData(replyerLastWrite)
+      if (replierLastWrite !== null) {
+        sender._port.binding.emitData(replierLastWrite)
       }
     }
 
-    // console.log('sender last write:', sender._port.binding.lastWrite)
     if (sender._port.binding.lastWrite !== senderLastWrite) {
       senderLastWrite = sender._port.binding.lastWrite
 
       if (senderLastWrite !== null) {
-        replyer._port.binding.emitData(senderLastWrite)
+        replier._port.binding.emitData(senderLastWrite)
       }
     }
   }, 100)
@@ -169,7 +165,7 @@ test('json messages should be received and replied to successfully', async (t) =
   clearInterval(interval)
 
   await sender.close()
-  await replyer.close()
+  await replier.close()
   t.end()
 })
 
@@ -193,7 +189,6 @@ test('Error replies should be thrown as errors', async (t) => {
   let replyerLastWrite
 
   let interval = setInterval(() => {
-    // console.log('replyer last write:', replyer._port.binding.lastWrite)
     if (replyer._port.binding.lastWrite !== replyerLastWrite) {
       replyerLastWrite = replyer._port.binding.lastWrite
 
@@ -202,7 +197,6 @@ test('Error replies should be thrown as errors', async (t) => {
       }
     }
 
-    // console.log('sender last write:', sender._port.binding.lastWrite)
     if (sender._port.binding.lastWrite !== senderLastWrite) {
       senderLastWrite = sender._port.binding.lastWrite
 
@@ -301,7 +295,6 @@ test('should be able to handle multiple messages in one stream', async (t) => {
 
   let msgCount = 0
   endpoint.onMessage((msg) => {
-    console.log('received msg:', msg, msgCount)
     msgCount++
     return 'ok'
   })
@@ -339,7 +332,6 @@ test('should dismiss incomplete messages', async (t) => {
 
   let msgCount = 0
   endpoint.onMessage((msg) => {
-    console.log('received msg:', msg, msgCount)
     msgCount++
     t.equal(msg, msg2String)
     return 'ok'
@@ -376,7 +368,6 @@ test('should parse messages sent via multiple writes', async (t) => {
 
   let msgCount = 0
   endpoint.onMessage((msg) => {
-    console.log('received msg:', msg, msgCount)
     msgCount++
     t.equal(msg, msg1String)
     return 'ok'
@@ -390,22 +381,15 @@ test('should parse messages sent via multiple writes', async (t) => {
   }
 
   const msg1 = SerialIO.createMessageBuffer(Buffer.from(msg1String), SerialIO.MESSAGE_TYPE.REQUEST)
+  const msgHalfLength = Math.round(msg1.length / 2)
   // split
-  const p1 = msg1.slice(0, 6)
-  const p2 = msg1.slice(6, Math.round(msg1.length / 2))
-  const p3 = msg1.slice(Math.round(msg1.length / 2))
+  const p1 = msg1.slice(0, 6) // slicing it < 9 to make sure it can handle split header
+  const p2 = msg1.slice(6, msgHalfLength)
+  const p3 = msg1.slice(msgHalfLength)
 
-  setTimeout(() => {
-    endpoint._port.binding.emitData(p1)
-  }, 0)
-
-  setTimeout(() => {
-    endpoint._port.binding.emitData(p2)
-  }, 100)
-
-  setTimeout(() => {
-    endpoint._port.binding.emitData(p3)
-  }, 200)
+  setTimeout(() => endpoint._port.binding.emitData(p1), 0)
+  setTimeout(() => endpoint._port.binding.emitData(p2), 100)
+  setTimeout(() => endpoint._port.binding.emitData(p3), 200)
 
   setTimeout(async () => {
     t.equal(msgCount, 1, 'message was received')
