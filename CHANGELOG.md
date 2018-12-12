@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/tillhub/tillhub-serialio/compare/v2.1.1...v2.1.2) (2018-12-12)
+
+
+### Bug Fixes
+
+* **DataParser:** fixed data not being dropped if no message was found ([e505ec5](https://github.com/tillhub/tillhub-serialio/commit/e505ec5))
+
 ## [2.1.1](https://github.com/tillhub/tillhub-serialio/compare/v2.1.0...v2.1.1) (2018-12-12)
 
 
