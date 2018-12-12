@@ -1,3 +1,11 @@
+## [2.1.1](https://github.com/tillhub/tillhub-serialio/compare/v2.1.0...v2.1.1) (2018-12-12)
+
+
+### Bug Fixes
+
+* **Utils:** fixed truncate result length being off by 1 if mL is odd ([3692037](https://github.com/tillhub/tillhub-serialio/commit/3692037))
+* fixed data parsing ([2f1d42a](https://github.com/tillhub/tillhub-serialio/commit/2f1d42a))
+
 # [2.1.0](https://github.com/tillhub/tillhub-serialio/compare/v2.0.0...v2.1.0) (2018-12-06)
 
 
