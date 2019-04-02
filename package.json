@@ -2,15 +2,22 @@
   "name": "@tillhub/serialio",
   "version": "2.1.2",
   "description": "Messaging API for communication over serial interfaces",
-  "main": "index.js",
+  "main": "dist/SerialIO.js",
+  "module": "dist/SerialIO.js",
+  "typings": "dist/types",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint -c .eslintrc .",
-    "lint-fix": "eslint -c .eslintrc --fix .",
-    "tdd": "NODE_ENV=test DEBUG=serialio:* nodemon --exec nodemon test/tdd-runner.js",
-    "test": "npm run clean && node -v && NODE_ENV=test npm run lint && npm run test:unit",
-    "test:unit": "NODE_ENV=test nyc tape 'test/**/*.spec.js' | tap-spec && nyc report",
-    "clean": "rimraf coverage coverage.lcov .nyc_output",
+    "build:main": "tsc -p tsconfig.json",
+    "build:docs": "typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build:bundle": "tsc --module commonjs",
+    "build": "npm run clean && npm run build:bundle",
+    "lint": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+    "lint:fix": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts' --fix",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "tdd": "npm run test:watch",
+    "test:prod": "npm run lint && npm run test -- --coverage --no-cache --runInBand",
+    "clean": "rimraf dist docs",
     "semantic-release": "semantic-release",
     "precommit": "git add .",
     "commit": "npm run precommit && git-cz"
@@ -21,34 +28,36 @@
   },
   "dependencies": {
     "debug": "^4.1.0",
-    "serialport": "^7.0.2"
+    "jest": "^24.5.0",
+    "promise-queue": "^2.2.5",
+    "serialport": "^7.0.2",
+    "ts-jest": "^24.0.1"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^3.0.0",
-    "@semantic-release/git": "^7.0.4",
-    "@semantic-release/github": "^5.0.6",
-    "@semantic-release/npm": "^5.0.4",
-    "blue-tape": "^1.0.0",
-    "chalk": "latest",
+    "@types/acorn": "^4.0.5",
+    "@types/debug": "^4.1.3",
+    "@types/glob": "7.1.1",
+    "@types/jest": "^24.0.11",
+    "@types/promise-queue": "^2.2.0",
+    "@types/rimraf": "^2.0.2",
+    "@types/semantic-release": "^15.13.0",
+    "@types/serialport": "^7.0.2",
+    "acorn": "^6.1.1",
     "commitizen": "^2.10.1",
     "conventional-changelog-cli": "^2.0.5",
     "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^5.9.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-require-path-exists": "1.1.9",
-    "eslint-plugin-standard": "^4.0.0",
     "glob": "latest",
     "nodemon": "^1.18.7",
-    "nyc": "^13.1.0",
-    "pump": "latest",
     "rimraf": "^2.6.0",
     "semantic-release": "^15.9.17",
-    "tap-spec": "^5.0.0",
-    "tape": "^4.9.1",
-    "validate-commit-msg": "^2.14.0"
+    "ts-loader": "^5.3.3",
+    "tslint": "^5.14.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-config-standard": "^8.0.1",
+    "typescript": "^3.3.4000",
+    "validate-commit-msg": "^2.14.0",
+    "@serialport/binding-mock": "latest",
+    "@serialport/stream": "latest"
   },
   "files": [
     "package.json",
@@ -92,29 +101,29 @@
       "@semantic-release/github"
     ]
   },
-  "nyc": {
-    "check-coverage": true,
-    "per-file": false,
-    "lines": 15,
-    "statements": 15,
-    "functions": 15,
-    "branches": 15,
-    "include": [
-      "lib/**/*.js",
-      "index.js"
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
     ],
-    "exclude": [
-      "test/**/*.js"
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/",
+      "/src/@types/"
     ],
-    "reporter": [
-      "lcov",
-      "text-summary",
-      "json"
-    ],
-    "require": [],
-    "extension": [],
-    "cache": true,
-    "all": true,
-    "report-dir": "./coverage"
+    "coverageThreshold": {
+      "global": {
+        "branches": 15,
+        "functions": 15,
+        "lines": 15,
+        "statements": 1
+      }
+    },
+    "collectCoverage": true
   }
 }
