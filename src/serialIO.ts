@@ -11,7 +11,7 @@ import Utils from './components/utils'
 /**
  * Messaging API, allows to send & receive message over a serial serialIO in a simple manner.
  */
-export default class SerialIO {
+export class SerialIO {
 
   /**
    * Indicates if a message transaction is in progress
@@ -98,7 +98,7 @@ export default class SerialIO {
         this._d('internal close handler failed', e)
       }
     })
-    return port
+    this._port = port
   }
 
   /**
@@ -111,12 +111,16 @@ export default class SerialIO {
       // check if port needs to be prepared first
       if (!this._port) {
         try {
-          this._port = this.preparePort(this._portString)
+          this.preparePort(this._portString)
         } catch (e) {
           this._d('preparing port failed: %s', e.message || e)
-          reject(e)
-          return
+          return reject(e)
         }
+      }
+
+      if (!this._port) {
+        this._d('no port to open')
+        return reject(new Error('no port to open'))
       }
 
       this._port.open((err) => {
@@ -371,3 +375,7 @@ export default class SerialIO {
     })
   }
 }
+
+// NOTE no idea why default export has to be done like this,
+// but to `export default` the class directly leads to problems when it's used as a dependency
+export default SerialIO

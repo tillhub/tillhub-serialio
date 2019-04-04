@@ -2,9 +2,7 @@
   "name": "@tillhub/serialio",
   "version": "2.1.2",
   "description": "Messaging API for communication over serial interfaces",
-  "main": "dist/SerialIO.js",
-  "module": "dist/SerialIO.js",
-  "typings": "dist/types",
+  "main": "dist/serialIO",
   "license": "MIT",
   "scripts": {
     "build:main": "tsc -p tsconfig.json",
@@ -28,10 +26,8 @@
   },
   "dependencies": {
     "debug": "^4.1.0",
-    "jest": "^24.5.0",
     "promise-queue": "^2.2.5",
-    "serialport": "^7.0.2",
-    "ts-jest": "^24.0.1"
+    "serialport": "^7.0.2"
   },
   "devDependencies": {
     "@types/acorn": "^4.0.5",
@@ -47,12 +43,13 @@
     "conventional-changelog-cli": "^2.0.5",
     "cz-conventional-changelog": "^2.1.0",
     "glob": "latest",
+    "jest": "^24.5.0",
     "nodemon": "^1.18.7",
     "rimraf": "^2.6.0",
     "semantic-release": "^15.9.17",
     "ts-loader": "^5.3.3",
     "tslint": "^5.14.0",
-    "tslint-config-prettier": "^1.18.0",
+    "ts-jest": "^24.0.1",
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.3.4000",
     "validate-commit-msg": "^2.14.0",
