@@ -33,12 +33,12 @@ export class SerialIO {
    */
   public closing = false
   public reopenAttempts: number = 0
+  public readonly port: string
 
   private _queue = new Queue(1, Infinity)
   private readonly _d: debug.Debugger
-  private readonly _portString: string
   private _handlers = {} as HandlerHolder
-  private _port: SerialPort | undefined
+  private readonly _serialPort: SerialPort
   private _parser = new DataParser()
   private _transactions = new TransactionHolder()
 
@@ -51,16 +51,10 @@ export class SerialIO {
 
     this._d('initializing...')
 
-    this._portString = port
+    this.port = port
     this._parser.onMessage((msg) => this._handleMessage(msg))
-  }
-
-  /**
-   * Prepares the serialport (without opening it). May throw an error, if the target port does not exist
-   */
-  public preparePort (portString: string) {
-    const port = new SerialPort(portString, { autoOpen: false })
-    port.on('data', (data) => {
+    this._serialPort = new SerialPort(port, { autoOpen: false })
+    this._serialPort.on('data', (data) => {
       this._d('DATA', data)
       try {
         this._parser && this._parser.parseData(data)
@@ -68,7 +62,7 @@ export class SerialIO {
         this._d('parsing data failed: %s', e.message || e)
       }
     })
-    port.on('error', (err) => {
+    this._serialPort.on('error', (err) => {
       this._d('error event: %s', err)
       try {
         this._handlers.error && this._handlers.error(err)
@@ -76,7 +70,7 @@ export class SerialIO {
         this._d('error handler returned with error: %s', e.message || e)
       }
     })
-    port.on('drain', (err) => {
+    this._serialPort.on('drain', (err) => {
       this._d('drain event: %s', err)
       try {
         this._handlers.drain && this._handlers.drain(err)
@@ -84,7 +78,7 @@ export class SerialIO {
         this._d('drain handler returned with error: %s', e.message || e)
       }
     })
-    port.on('open', (err) => {
+    this._serialPort.on('open', (err) => {
       this._d('open event: %s', err)
       try {
         this._handlers.open && this._handlers.open(err)
@@ -92,9 +86,9 @@ export class SerialIO {
         this._d('open handler returned with error: %s', e.message || e)
       }
     })
-    port.on('close', (err) => {
+    this._serialPort.on('close', (err) => {
       this._d('close event: %s', err)
-        // provide handler with additional 'unexpected' flag
+      // provide handler with additional 'unexpected' flag
       try {
         this._handlers.close && this._handlers.close(err)
       } catch (e) {
@@ -106,7 +100,6 @@ export class SerialIO {
         this._d('internal close handler failed', e)
       }
     })
-    this._port = port
   }
 
   /**
@@ -116,25 +109,10 @@ export class SerialIO {
   public open () {
     this.closing = false
     return new Promise((resolve, reject) => {
-      // check if port needs to be prepared first
-      if (!this._port) {
-        try {
-          this.preparePort(this._portString)
-        } catch (e) {
-          this._d('preparing port failed: %s', e.message || e)
-          return reject(e)
-        }
-      }
-
-      if (!this._port) {
-        this._d('no port to open')
-        return reject(new Error('no port to open'))
-      }
-
-      this._port.open((err) => {
-        if (err) {
-          this._d('opening port failed: %s', err.message || err)
-          reject(err)
+      this._serialPort.open((e) => {
+        if (e) {
+          this._d('opening port failed', e)
+          reject(e)
         } else {
           resolve()
         }
@@ -149,9 +127,10 @@ export class SerialIO {
   public close () {
     this.closing = true
     return new Promise((resolve, reject) => {
-      this._port && this._port.close((err) => {
-        if (err) {
-          reject(err)
+      this._serialPort.close((e) => {
+        if (e) {
+          this._d('closing port failed', e)
+          reject(e)
         } else {
           resolve()
         }
@@ -164,9 +143,7 @@ export class SerialIO {
    * @returns {boolean}
    */
   public isOpen () {
-    if (!this._port) return false
-
-    return this._port.isOpen
+    return this._serialPort.isOpen
   }
 
   /**
@@ -213,7 +190,9 @@ export class SerialIO {
   /**
    * Send a request with a message body
    */
-  public sendRequest (data: string) {
+  public sendRequest (data: string | object) {
+    if (typeof data !== 'string') data = JSON.stringify(data)
+
     return this.send(Message.create(data, Message.TYPE.REQUEST))
   }
 
@@ -238,7 +217,7 @@ export class SerialIO {
    * @private
    */
   public async _handleMessage (msg: Message) {
-    this._d(`${this._portString} > [${Utils.toHex(msg.type)}:${msg.rawData.length}b] ${Utils.truncate(msg.data)}`)
+    this._d(`${this.port} > [${Utils.toHex(msg.type)}:${msg.rawData.length}b] ${Utils.truncate(msg.data)}`)
     switch (msg.type) {
       case Message.TYPE.REQUEST:
         this._d('handlers:', this._handlers)
@@ -336,13 +315,8 @@ export class SerialIO {
   public _writeAndDrain (data: Buffer) {
     this._d('writeAndDrain', data.length)
     return new Promise<void>((resolve, reject) => {
-      if (!this._port) {
-        this._d('no port to write to or drain')
-        return reject(new Error('no port to write to or drain'))
-      }
-
       // write...
-      this._port.write(data, undefined, (err) => {
+      this._serialPort.write(data, undefined, (err) => {
         // we still want to drain, so don't resolve yet
         // don't know if we need both checks, but I probably put it in for a reason
         if (err) {
@@ -352,7 +326,7 @@ export class SerialIO {
       })
 
       // and drain...
-      this._port.drain((err) => {
+      this._serialPort.drain((err) => {
         if (err) {
           this._d('drain failed: %s', err.message || err)
           reject(err)
@@ -363,11 +337,16 @@ export class SerialIO {
     })
   }
 
+  /**
+   * Send a message over the serial port
+   * @param {Message} msg
+   * @returns {Promise<Message | undefined>} - fulfills with a reply, or undefined if the initial message was a reply
+   */
   public send (msg: Message) {
     return new Promise<Message | undefined>((resolve, reject) => {
       this._transactions.add({ id: msg.id, resolve, reject } as Transaction)
       this._queue.add(() => {
-        this._d(`${this._portString} < [${Utils.toHex(msg.type)}:${msg.rawData.length}b] ${Utils.truncate(msg.data)}`)
+        this._d(`${this.port} < [${Utils.toHex(msg.type)}:${msg.rawData.length}b] ${Utils.truncate(msg.data)}`)
         return this._sendInParts(msg.raw)
       }).then(
         () => {
