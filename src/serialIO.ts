@@ -14,6 +14,14 @@ import Utils from './components/utils'
 export class SerialIO {
 
   /**
+   * Returns a list of usable serial ports
+   * @returns {Promise<SerialPort.PortInfo[]>}
+   */
+  public static list () {
+    return SerialPort.list()
+  }
+
+  /**
    * Indicates if a message transaction is in progress
    * @type {boolean}
    */
