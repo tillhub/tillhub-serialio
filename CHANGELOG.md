@@ -1,3 +1,24 @@
+# [3.0.0](https://github.com/tillhub/tillhub-serialio/compare/v2.1.2...v3.0.0) (2019-04-10)
+
+
+### Bug Fixes
+
+* added a few tweaks to SerialIO can be used as a dependency properly ([83a411c](https://github.com/tillhub/tillhub-serialio/commit/83a411c))
+* fixed incomplete message transfer ([aa7eb5f](https://github.com/tillhub/tillhub-serialio/commit/aa7eb5f))
+
+
+### Features
+
+* added `PING` type & custom request timeout ([194a356](https://github.com/tillhub/tillhub-serialio/commit/194a356))
+* added ability to list available serial ports ([674e63c](https://github.com/tillhub/tillhub-serialio/commit/674e63c))
+* converted project to TypeScript ([180ceea](https://github.com/tillhub/tillhub-serialio/commit/180ceea))
+
+
+### BREAKING CHANGES
+
+* Due to the move to TypeScript, many changes were made to code structure, making it
+incompatible with prior versions
+
 ## [2.1.2](https://github.com/tillhub/tillhub-serialio/compare/v2.1.1...v2.1.2) (2018-12-12)
 
 
