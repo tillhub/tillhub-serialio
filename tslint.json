@@ -1,0 +1,12 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-standard"
+  ],
+  "jsRules": {},
+  "rules": {
+    "interface-over-type-literal": false
+  },
+  "rulesDirectory": []
+}
