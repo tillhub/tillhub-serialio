@@ -1,9 +1,10 @@
 import debug from 'debug'
 
 enum TYPE {
-  ERROR = 0xff,
+  REQUEST = 0x00,
+  PING = 0x01,
   REPLY = 0xfe,
-  REQUEST = 0x00
+  ERROR = 0xff
 }
 
 enum META_OFFSET {

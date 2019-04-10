@@ -5,7 +5,7 @@ import DataParser from './components/dataParser'
 import { HandlerHolder } from './components/handlerHolder'
 import Message from './components/message'
 import TransactionHolder from './components/transactionHolder'
-import { MessageHandler, PortEventHandler, Transaction } from './components/types'
+import { MessageHandler, PortEventHandler } from './components/types'
 import Utils from './components/utils'
 
 /**
@@ -197,6 +197,14 @@ export class SerialIO {
   }
 
   /**
+   * Send a ping request
+   * @returns {Promise<Message | undefined>}
+   */
+  public ping () {
+    return this.send(Message.create('', Message.TYPE.PING), 500)
+  }
+
+  /**
    * Send a (success) reply
    */
   public sendReply (data: string, id: number) {
@@ -219,6 +227,13 @@ export class SerialIO {
   public async _handleMessage (msg: Message) {
     this._d(`${this.port} > [${Utils.toHex(msg.type)}:${msg.rawData.length}b] ${Utils.truncate(msg.data)}`)
     switch (msg.type) {
+      case Message.TYPE.PING:
+        try {
+          await this.sendReply('', msg.id)
+        } catch (e) {
+          this._d('failed to pong', e)
+        }
+        break
       case Message.TYPE.REQUEST:
         this._d('handlers:', this._handlers)
         if (!this._handlers.message) {
@@ -340,18 +355,19 @@ export class SerialIO {
   /**
    * Send a message over the serial port
    * @param {Message} msg
+   * @param {number} timeout
    * @returns {Promise<Message | undefined>} - fulfills with a reply, or undefined if the initial message was a reply
    */
-  public send (msg: Message) {
+  public send (msg: Message, timeout?: number) {
     return new Promise<Message | undefined>((resolve, reject) => {
-      this._transactions.add({ id: msg.id, resolve, reject } as Transaction)
+      this._transactions.add({ id: msg.id, resolve, reject }, timeout)
       this._queue.add(() => {
         this._d(`${this.port} < [${Utils.toHex(msg.type)}:${msg.rawData.length}b] ${Utils.truncate(msg.data)}`)
         return this._sendInParts(msg.raw)
       }).then(
         () => {
           if (msg.type === Message.TYPE.REPLY) {
-            this._transactions.resolve(msg.id, msg)
+            this._transactions.resolve(msg.id)
           }
         },
         (e) => {

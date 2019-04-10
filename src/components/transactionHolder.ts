@@ -11,11 +11,11 @@ export default class TransactionHolder {
     return this._transactions[id]
   }
 
-  public add (transaction: Transaction) {
+  public add (transaction: Transaction, timeout = TransactionHolder.TIMEOUT) {
     // start transaction timeout
     transaction.timeout = setTimeout(() => {
       transaction.reject(new TimeoutError('timeout reached'))
-    }, TransactionHolder.TIMEOUT)
+    }, timeout)
 
     this._transactions[transaction.id] = transaction
   }
@@ -31,7 +31,7 @@ export default class TransactionHolder {
     return transaction
   }
 
-  public resolve (id: number, msg: Message | undefined) {
+  public resolve (id: number, msg?: Message) {
     const transaction = this.remove(id)
     if (transaction) {
       transaction.resolve(msg)
