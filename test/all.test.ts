@@ -81,24 +81,24 @@ describe('SerialIO', () => {
     // transmits data between sender & replier
     const interval = setInterval(() => {
       // @ts-ignore
-      if (replier._port.binding.lastWrite !== replierLastWrite) {
+      if (replier._serialPort.binding.lastWrite !== replierLastWrite) {
         // @ts-ignore
-        replierLastWrite = replier._port.binding.lastWrite
+        replierLastWrite = replier._serialPort.binding.lastWrite
 
         if (replierLastWrite !== null) {
           // @ts-ignore
-          sender._port.binding.emitData(replierLastWrite)
+          sender._serialPort.binding.emitData(replierLastWrite)
         }
       }
 
       // @ts-ignore
-      if (sender._port.binding.lastWrite !== senderLastWrite) {
+      if (sender._serialPort.binding.lastWrite !== senderLastWrite) {
         // @ts-ignore
-        senderLastWrite = sender._port.binding.lastWrite
+        senderLastWrite = sender._serialPort.binding.lastWrite
 
         if (senderLastWrite !== null) {
           // @ts-ignore
-          replier._port.binding.emitData(senderLastWrite)
+          replier._serialPort.binding.emitData(senderLastWrite)
         }
       }
     }, 1)
@@ -138,24 +138,24 @@ describe('SerialIO', () => {
     // transmits data between sender & replier
     const interval = setInterval(() => {
       // @ts-ignore
-      if (replier._port.binding.lastWrite !== replierLastWrite) {
+      if (replier._serialPort.binding.lastWrite !== replierLastWrite) {
         // @ts-ignore
-        replierLastWrite = replier._port.binding.lastWrite
+        replierLastWrite = replier._serialPort.binding.lastWrite
 
         if (replierLastWrite !== null) {
           // @ts-ignore
-          sender._port.binding.emitData(replierLastWrite)
+          sender._serialPort.binding.emitData(replierLastWrite)
         }
       }
 
       // @ts-ignore
-      if (sender._port.binding.lastWrite !== senderLastWrite) {
+      if (sender._serialPort.binding.lastWrite !== senderLastWrite) {
         // @ts-ignore
-        senderLastWrite = sender._port.binding.lastWrite
+        senderLastWrite = sender._serialPort.binding.lastWrite
 
         if (senderLastWrite !== null) {
           // @ts-ignore
-          replier._port.binding.emitData(senderLastWrite)
+          replier._serialPort.binding.emitData(senderLastWrite)
         }
       }
     }, 1)
@@ -189,12 +189,12 @@ describe('SerialIO', () => {
     await expect(endpoint.open()).resolves.toBeUndefined()
 
     // @ts-ignore
-    endpoint._port.binding.emitData(garbage)
+    endpoint._serialPort.binding.emitData(garbage)
 
     // @ts-ignore
-    endpoint._port.binding.emitData(Message.create(Buffer.from('this is not garbage'), Message.TYPE.REQUEST).raw)
+    endpoint._serialPort.binding.emitData(Message.create(Buffer.from('this is not garbage'), Message.TYPE.REQUEST).raw)
     // @ts-ignore
-    endpoint._port.binding.emitData(garbage)
+    endpoint._serialPort.binding.emitData(garbage)
   })
 
   it('should throw a timeout if no message has been received', async () => {
@@ -228,7 +228,7 @@ describe('SerialIO', () => {
 
     const allMsg = Buffer.concat([msg1.raw, msg2.raw, msg3.raw])
     // @ts-ignore
-    endpoint._port.binding.emitData(allMsg)
+    endpoint._serialPort.binding.emitData(allMsg)
   })
 
   it('should dismiss incomplete messages', async (done) => {
@@ -254,7 +254,7 @@ describe('SerialIO', () => {
 
     const allMsg = Buffer.concat([msg1, msg2])
     // @ts-ignore
-    endpoint._port.binding.emitData(allMsg)
+    endpoint._serialPort.binding.emitData(allMsg)
 
     setTimeout(async () => {
       expect(msgCount).toEqual(1)
@@ -288,11 +288,11 @@ describe('SerialIO', () => {
     const p3 = msg1.slice(msgHalfLength)
 
     // @ts-ignore
-    setTimeout(() => endpoint._port.binding.emitData(p1), 0)
+    setTimeout(() => endpoint._serialPort.binding.emitData(p1), 0)
     // @ts-ignore
-    setTimeout(() => endpoint._port.binding.emitData(p2), 100)
+    setTimeout(() => endpoint._serialPort.binding.emitData(p2), 100)
     // @ts-ignore
-    setTimeout(() => endpoint._port.binding.emitData(p3), 200)
+    setTimeout(() => endpoint._serialPort.binding.emitData(p3), 200)
 
     setTimeout(async () => {
       expect(msgCount).toEqual(1)
