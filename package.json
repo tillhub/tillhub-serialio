@@ -16,7 +16,7 @@
     "tdd": "npm run test:watch",
     "test:prod": "npm run lint && npm run test -- --coverage --no-cache --runInBand",
     "clean": "rimraf dist docs",
-    "semantic-release": "semantic-release",
+    "semantic-release": "semantic-release --branch next",
     "precommit": "git add .",
     "commit": "npm run precommit && git-cz"
   },
@@ -59,8 +59,8 @@
   "files": [
     "package.json",
     "package-lock.json",
-    "lib",
-    "index.js",
+    "src",
+    "dist",
     "CHANGELOG.md"
   ],
   "config": {
@@ -86,8 +86,8 @@
         "assets": [
           "package.json",
           "package-lock.json",
-          "lib",
-          "index.js",
+          "src",
+          "dist",
           "CHANGELOG.md"
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"

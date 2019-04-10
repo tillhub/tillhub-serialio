@@ -20,6 +20,9 @@ jobs:
           name: test
           command: npm test
       # - run: npm run coverage
+      - run:
+          name: build
+          command: npm run build
 
       - run:
           name: release
