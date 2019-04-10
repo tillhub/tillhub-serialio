@@ -305,16 +305,14 @@ export class SerialIO {
    * @param {number} from
    * @private
    */
-  public async _sendInParts (buffer: Buffer, from = 0) {
-    this._d('sendInParts', buffer.length, from, buffer.length - from)
-    const partSize = Math.min(1024 * 64, buffer.length)
-    const partBuf = Buffer.allocUnsafe(Math.min(partSize, buffer.length - from))
-    buffer.copy(partBuf, 0, from, from + partBuf.length)
+  public async _sendInParts (buffer: Buffer, from = 0): Promise<void> {
+    this._d('sendInParts. buffer: %dB, from: %d, remaining: %dB', buffer.length, from, buffer.length - from)
+    const partSize = Math.min(512, buffer.length - from)
 
     // we want this to throw, it's then handled by calling function
-    await this._writeAndDrain(partBuf)
-    if (buffer.length !== from + partBuf.length) {
-      await this._sendInParts(buffer, from + partSize)
+    await this._writeAndDrain(buffer.slice(from, from + partSize))
+    if (buffer.length > from + partSize) {
+      return this._sendInParts(buffer, from + partSize)
     } else {
       this._d('sendInParts DONE')
       this.sending = false
@@ -331,23 +329,23 @@ export class SerialIO {
     this._d('writeAndDrain', data.length)
     return new Promise<void>((resolve, reject) => {
       // write...
-      this._serialPort.write(data, undefined, (err) => {
+      this._serialPort.write(data, undefined, (wErr) => {
         // we still want to drain, so don't resolve yet
         // don't know if we need both checks, but I probably put it in for a reason
-        if (err) {
-          this._d('write failed: %s', err.message || err)
-          reject(err)
+        if (wErr) {
+          this._d('write failed: %s', wErr.message || wErr)
+          return reject(wErr)
         }
-      })
 
-      // and drain...
-      this._serialPort.drain((err) => {
-        if (err) {
-          this._d('drain failed: %s', err.message || err)
-          reject(err)
-        } else {
-          resolve()
-        }
+        // and drain...
+        this._serialPort.drain((dErr) => {
+          if (dErr) {
+            this._d('drain failed: %s', dErr.message || dErr)
+            return reject(dErr)
+          }
+
+          return resolve()
+        })
       })
     })
   }
