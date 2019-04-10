@@ -2,7 +2,7 @@ import Message from './message'
 import Timeout = NodeJS.Timeout
 
 export type MessageHandler = (msg: Message) => string | Promise<string>
-export type PortEventHandler = (error: Error | undefined) => void
+export type PortEventHandler = (error?: Error) => void
 
 export type ParsedMessageHandler = (msg: Message) => void
 
@@ -12,7 +12,7 @@ export type ParsedMessageHandler = (msg: Message) => void
  */
 export type Transaction = {
   id: number
-  resolve: (msg: Message | undefined) => void
+  resolve: (msg?: Message) => void
   reject: (error: Error) => void
-  timeout: Timeout | undefined
+  timeout?: Timeout
 }
