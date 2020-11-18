@@ -45,7 +45,7 @@
     "nyc": "^13.1.0",
     "pump": "latest",
     "rimraf": "^2.6.0",
-    "semantic-release": "^15.9.17",
+    "semantic-release": "^17.2.3",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",
     "validate-commit-msg": "^2.14.0"
